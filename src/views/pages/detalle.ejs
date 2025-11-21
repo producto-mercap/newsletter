@@ -278,14 +278,14 @@
                             <img src="<%= funcionalidad.icon %>" style="width: 48px; height: 48px; object-fit: contain;" alt="Icono">
                         <% } else if (funcionalidad.icon.startsWith('material-icons:')) { %>
                             <% const materialIconName = funcionalidad.icon.split(':')[1]; %>
-                            <span class="material-icons" style="font-size: 48px; color: var(--primary-color);"><%= materialIconName %></span>
+                            <span class="material-icons" style="font-size: 48px; color: #4c5053;"><%= materialIconName %></span>
                                 <% } else { %>
-                            <i class="<%= funcionalidad.icon %>" style="font-size: 48px; color: var(--primary-color);"></i>
+                            <i class="<%= funcionalidad.icon %>" style="font-size: 48px; color: #4c5053;"></i>
                     <% } %>
             </div>
                         <% } else { %>
                     <div class="one-page-header-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color: #1a73e8;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color: #4c5053;">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
                     </div>
@@ -425,22 +425,38 @@
                     
             <!-- Información de Contacto -->
             <div class="one-page-footer">
-                <h3 class="one-page-footer-title">Información de contacto</h3>
-                <div class="one-page-footer-content">
-                    <div class="one-page-footer-left">
-                        <div class="contact-address">
-                            <p>Maipú 116 Piso 4</p>
-                            <p>C1084 CABA</p>
-                            <p>Argentina</p>
-                        </div>
+                <div class="one-page-footer-container">
+                    <div class="one-page-footer-header">
+                        <h3 class="one-page-footer-title">Información de contacto</h3>
                     </div>
-                    <div class="one-page-footer-center">
-                        <div class="contact-email">
-                            <a href="mailto:comercial@mercapsoftware.com" class="contact-link">comercial@mercapsoftware.com</a>
+                    <div class="one-page-footer-content">
+                        <div class="one-page-footer-left">
+                            <div class="contact-section">
+                                <div class="contact-icon-wrapper">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-address">
+                                    <p><strong>Maipú 116 Piso 4</strong></p>
+                                    <p>C1084 CABA</p>
+                                    <p>Argentina</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="one-page-footer-right">
-                        <img src="/images/Mercap-logo.png" alt="Mercap Logo" class="contact-logo">
+                        <div class="one-page-footer-center">
+                            <div class="contact-section">
+                                <div class="contact-icon-wrapper">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
+                                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-email">
+                                    <a href="mailto:comercial@mercapsoftware.com" class="contact-link">comercial@mercapsoftware.com</a>
+                                    <a href="mailto:producto@mercapsoftware.com" class="contact-link">producto@mercapsoftware.com</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -448,6 +464,7 @@
         <% } %>
     </main>
     
+    <%- include('../partials/contact-panel') %>
     <%- include('../partials/footer') %>
     
     <script src="/js/main.js"></script>
