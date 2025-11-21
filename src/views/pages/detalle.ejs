@@ -713,44 +713,55 @@
         'pie_chart', 'insert_chart', 'assessment', 'analytics', 'receipt', 'receipt_long',
         'credit_card', 'card_membership', 'account_circle', 'wallet', 'currency_exchange',
         'payments', 'price_check', 'price_change', 'calculate', 'point_of_sale',
-        'account_tree', 'money', 'euro', 'dollar', 'local_atm', 'atm', 'account_balance_bank',
+        'account_tree', 'local_atm', 'account_box',
+        'credit_score',
         
         // Tecnología y Sistemas
         'computer', 'laptop', 'devices', 'phone_android', 'tablet', 'memory', 'storage',
         'cloud', 'cloud_upload', 'cloud_download', 'cloud_sync', 'data_usage', 'dns',
         'router', 'wifi', 'signal_cellular_alt', 'network_check', 'settings', 'settings_applications',
         'tune', 'build', 'code', 'terminal', 'bug_report', 'security', 'lock', 'vpn_key',
-        'admin_panel_settings', 'verified_user', 'shield', 'encrypted', 'key',
-        'developer_mode', 'integration_instructions', 'api', 'webhook', 'http',
+        'admin_panel_settings', 'verified_user', 'shield', 'key',
+        'developer_mode', 'integration_instructions', 'api',
+        'code_off', 'data_object',
+        'web', 'web_asset', 'web_stories',
         
         // Servidores y Infraestructura
-        'server', 'dns', 'router', 'network_node', 'hub', 'storage', 'database',
+        'hub', 'database',
         'cloud_queue', 'cloud_done', 'cloud_off', 'backup', 'restore', 'sync',
-        'server_environment', 'server_network', 'server_security', 'server_maintenance',
+        'hardware', 'storage',
         
         // API y Conectividad
-        'api', 'webhook', 'http', 'link', 'link_off', 'hub', 'share', 'share_location',
+        'api', 'link', 'link_off', 'hub', 'share', 'share_location',
         'public', 'language', 'swap_horiz', 'swap_vert', 'sync', 'sync_alt', 'cached',
         'refresh', 'autorenew', 'swap_calls', 'call_merge', 'call_split', 'call_made',
-        'call_received', 'integration_instructions', 'web', 'language', 'public',
+        'call_received', 'integration_instructions', 'web', 'public',
+        'connected_tv',
         
         // Mercado de Capitales y Trading
-        'trending_up', 'trending_down', 'show_chart', 'candlestick_chart', 'stock',
+        'trending_up', 'trending_down', 'show_chart', 'candlestick_chart',
         'line_axis', 'scatter_plot', 'bubble_chart', 'area_chart', 'timeline',
         'insights', 'query_stats', 'schema', 'corporate_fare', 'business', 'domain',
-        'apartment', 'store', 'storefront', 'trading', 'market', 'finance',
-        'trending_flat', 'show_chart', 'bar_chart', 'pie_chart', 'multiline_chart',
+        'apartment', 'store', 'storefront',
+        'trending_flat', 'bar_chart', 'pie_chart', 'multiline_chart',
         
         // Bancos y Entidades Financieras
-        'account_balance', 'account_balance_bank', 'account_circle', 'business',
-        'corporate_fare', 'domain', 'apartment', 'store', 'storefront', 'bank',
-        'local_bank', 'account_tree', 'corporate_account', 'business_center',
+        'account_balance', 'account_circle', 'business',
+        'corporate_fare', 'domain', 'apartment', 'store', 'storefront',
+        'account_tree', 'business_center',
         'account_box', 'badge', 'verified', 'verified_user', 'security',
+        
+        // Desarrollo y Programación
+        'code', 'code_off', 'developer_mode', 'terminal',
+        'data_object', 'web', 'web_asset',
+        'build', 'settings', 'tune', 'bug_report',
+        'sync', 'autorenew',
+        'assessment', 'analytics', 'query_stats',
         
         // Documentos y Archivos
         'description', 'article', 'text_snippet', 'note', 'note_add', 'note_alt',
         'file_copy', 'file_download', 'file_upload', 'file_present', 'folder',
-        'folder_open', 'folder_shared', 'drive_file', 'insert_drive_file',
+        'folder_open', 'folder_shared', 'insert_drive_file',
         'picture_as_pdf', 'image', 'image_search', 'collections', 'library_books',
         'menu_book', 'book', 'bookmark', 'bookmark_add', 'bookmark_border',
         
@@ -773,7 +784,10 @@
         materialIcons.forEach(iconName => {
             const iconDiv = document.createElement('div');
             iconDiv.className = 'icon-item';
-            iconDiv.innerHTML = `<span class="material-icons">${iconName}</span>`;
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'material-icons';
+            iconSpan.textContent = iconName;
+            iconDiv.appendChild(iconSpan);
             iconDiv.title = iconName;
             iconDiv.onclick = () => seleccionarMaterialIcon(iconName);
             grid.appendChild(iconDiv);
