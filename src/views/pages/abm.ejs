@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - Newsletter Unitrade</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <%- include('../partials/header', { activeMenu: '' }) %>
+    
+    <main class="main-content">
+        <div class="page-container" style="max-width: 1400px; margin: 0 auto; padding: 40px;">
+            <div class="page-header">
+                <h1 class="page-title">Administración de Funcionalidades</h1>
+                <p class="page-subtitle">Crear, editar y eliminar funcionalidades</p>
+            </div>
+
+            <div class="abm-container">
+                <div class="abm-form-section">
+                    <h2><%= funcionalidad ? 'Editar' : 'Nueva' %> Funcionalidad</h2>
+                    <form id="abmForm" onsubmit="guardarFuncionalidad(event)">
+                        <input type="hidden" id="funcionalidadId" value="<%= funcionalidad ? funcionalidad.id : '' %>">
+                        
+                        <div class="form-group">
+                            <label for="title">Título *</label>
+                            <input type="text" id="title" name="title" required value="<%= funcionalidad ? funcionalidad.title : '' %>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Descripción</label>
+                            <textarea id="description" name="description" rows="5" lang="es" spellcheck="true"><%= funcionalidad ? funcionalidad.description : '' %></textarea>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="section">Sección *</label>
+                                <select id="section" name="section" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Operatorias" <%= funcionalidad && funcionalidad.section === 'Operatorias' ? 'selected' : '' %>>Operatorias</option>
+                                    <option value="Backoffice" <%= funcionalidad && funcionalidad.section === 'Backoffice' ? 'selected' : '' %>>Backoffice</option>
+                                    <option value="Market Data" <%= funcionalidad && funcionalidad.section === 'Market Data' ? 'selected' : '' %>>Market Data</option>
+                                    <option value="Valuacion y Contabilidad" <%= funcionalidad && funcionalidad.section === 'Valuacion y Contabilidad' ? 'selected' : '' %>>Valuación y Contabilidad</option>
+                                    <option value="Reportes/Interfaces" <%= funcionalidad && funcionalidad.section === 'Reportes/Interfaces' ? 'selected' : '' %>>Reportes/Interfaces</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="type">Tipo *</label>
+                                <select id="type" name="type" required>
+                                    <option value="catalogo" <%= funcionalidad && funcionalidad.type === 'catalogo' ? 'selected' : '' %>>Catálogo</option>
+                                    <option value="newsletter" <%= funcionalidad && funcionalidad.type === 'newsletter' ? 'selected' : '' %>>Newsletter</option>
+                                    <option value="proximamente" <%= funcionalidad && funcionalidad.type === 'proximamente' ? 'selected' : '' %>>Próximamente</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="icon">Ícono (URL o emoji)</label>
+                            <input type="text" id="icon" name="icon" value="<%= funcionalidad ? funcionalidad.icon : '' %>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pdf_url">URL del PDF</label>
+                            <input type="url" id="pdf_url" name="pdf_url" value="<%= funcionalidad ? funcionalidad.pdf_url : '' %>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Alcance</label>
+                            <div id="alcanceContainer" style="margin-bottom: 12px;">
+                                <% 
+                                let alcanceEdit = [];
+                                if (funcionalidad && funcionalidad.alcance) {
+                                    try {
+                                        if (typeof funcionalidad.alcance === 'string') {
+                                            const parsed = JSON.parse(funcionalidad.alcance || '[]');
+                                            alcanceEdit = Array.isArray(parsed) ? parsed : [];
+                                        } else if (Array.isArray(funcionalidad.alcance)) {
+                                            alcanceEdit = funcionalidad.alcance;
+                                        }
+                                    } catch (e) {
+                                        alcanceEdit = [];
+                                    }
+                                }
+                                alcanceEdit.forEach((item, index) => {
+                                %>
+                                <div class="tag-edit-item" style="margin-bottom: 12px; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--hover-bg);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-weight: 500; font-size: 13px;">Tag <%= index + 1 %></span>
+                                        <button type="button" onclick="eliminarTagAlcance(this)" style="background: #d93025; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Eliminar</button>
+                                    </div>
+                                    <input type="text" class="tag-titulo-alcance" placeholder="Título (opcional)" value="<%= item.titulo || '' %>" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;">
+                                    <textarea class="tag-descripcion" placeholder="Descripción" rows="2" lang="es" spellcheck="true" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;"><%= item.descripcion || item.description || '' %></textarea>
+                                </div>
+                                <% }); %>
+                            </div>
+                            <button type="button" onclick="agregarTagAlcance()" class="btn" style="width: 100%; margin-bottom: 16px;">+ Agregar Tag de Alcance</button>
+                            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                                <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: var(--text-primary);">Imagen de Alcance (opcional)</label>
+                                <input type="file" id="alcanceSectionImage" accept="image/*" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;" onchange="previewAlcanceSectionImage(this)">
+                                <input type="hidden" id="alcanceSectionImageData" value="<%= funcionalidad && funcionalidad.alcance_imagen ? funcionalidad.alcance_imagen : '' %>">
+                                <div id="alcanceSectionImagePreview" style="margin-top: 12px; <%= funcionalidad && funcionalidad.alcance_imagen ? '' : 'display: none;' %>">
+                                    <img id="alcanceSectionImagePreviewImg" src="<%= funcionalidad && funcionalidad.alcance_imagen ? funcionalidad.alcance_imagen : '' %>" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid var(--border-color);" />
+                                    <button type="button" onclick="eliminarAlcanceSectionImage()" style="margin-top: 8px; padding: 6px 12px; background: #d93025; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Eliminar imagen</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ventajas esperadas</label>
+                            <div id="ventajasContainer" style="margin-bottom: 12px;">
+                                <% 
+                                let ventajasEdit = [];
+                                if (funcionalidad && funcionalidad.ventajas_esperadas) {
+                                    try {
+                                        if (typeof funcionalidad.ventajas_esperadas === 'string') {
+                                            const parsed = JSON.parse(funcionalidad.ventajas_esperadas || '[]');
+                                            ventajasEdit = Array.isArray(parsed) ? parsed : [];
+                                        } else if (Array.isArray(funcionalidad.ventajas_esperadas)) {
+                                            ventajasEdit = funcionalidad.ventajas_esperadas;
+                                        }
+                                    } catch (e) {
+                                        ventajasEdit = [];
+                                    }
+                                }
+                                ventajasEdit.forEach((item, index) => {
+                                %>
+                                <div class="tag-edit-item" style="margin-bottom: 12px; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--hover-bg);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-weight: 500; font-size: 13px;">Tag <%= index + 1 %></span>
+                                        <button type="button" onclick="eliminarTagVentajas(this)" style="background: #d93025; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Eliminar</button>
+                                    </div>
+                                    <input type="text" class="tag-titulo" placeholder="Título" value="<%= item.titulo || item.title || '' %>" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px; font-size: 14px;">
+                                    <textarea class="tag-descripcion" placeholder="Descripción" rows="2" lang="es" spellcheck="true" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;"><%= item.descripcion || item.description || '' %></textarea>
+                                </div>
+                                <% }); %>
+                            </div>
+                            <button type="button" onclick="agregarTagVentajas()" class="btn" style="width: 100%;">+ Agregar Tag de Ventajas</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Partes Interesadas</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 16px; background: var(--hover-bg); border-radius: 8px;">
+                                <% 
+                                let partes = [];
+                                if (funcionalidad && funcionalidad.partes_interesadas) {
+                                    try {
+                                        if (typeof funcionalidad.partes_interesadas === 'string') {
+                                            const parsed = JSON.parse(funcionalidad.partes_interesadas || '[]');
+                                            partes = Array.isArray(parsed) ? parsed : [];
+                                        } else if (Array.isArray(funcionalidad.partes_interesadas)) {
+                                            partes = funcionalidad.partes_interesadas;
+                                        }
+                                    } catch (e) {
+                                        partes = [];
+                                    }
+                                }
+                                const todasPartes = ['Sistemas', 'HomeBanking', 'Backoffice', 'Contabilidad', 'Mesa de dinero', 'Impuestos'];
+                                todasPartes.forEach(parte => {
+                                    const activa = partes.includes(parte) || (Array.isArray(partes) && partes.some(p => p.toLowerCase() === parte.toLowerCase()));
+                                %>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='white'" onmouseout="this.style.background='transparent'">
+                                    <input type="checkbox" class="stakeholder-checkbox" value="<%= parte %>" <%= activa ? 'checked' : '' %> style="cursor: pointer;">
+                                    <span style="font-size: 14px;"><%= parte %></span>
+                                </label>
+                                <% }); %>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="button">Guardar</button>
+                            <% if (funcionalidad) { %>
+                            <button type="button" class="btn btn-danger" onclick="eliminarFuncionalidad('<%= funcionalidad.id %>')">Eliminar</button>
+                            <% } %>
+                            <a href="/abm" class="btn">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="abm-list-section">
+                    <h2>Funcionalidades Existentes</h2>
+                    <div class="abm-list">
+                        <% todasLasFuncionalidades.forEach(func => { %>
+                        <div class="abm-list-item">
+                            <div class="abm-item-info">
+                                <h3><%= func.title %></h3>
+                                <p><%= func.type %> - <%= func.section %></p>
+                            </div>
+                            <div class="abm-item-actions">
+                                <a href="/abm?id=<%= func.id %>" class="btn btn-small">Editar</a>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script>
+    async function guardarFuncionalidad(event) {
+        event.preventDefault();
+        
+        const id = document.getElementById('funcionalidadId').value;
+        
+        // Obtener partes interesadas seleccionadas
+        const checkboxes = document.querySelectorAll('.stakeholder-checkbox:checked');
+        const partesInteresadas = Array.from(checkboxes).map(cb => cb.value);
+        
+        // Obtener tags de alcance (con título opcional)
+        const alcanceItems = Array.from(document.querySelectorAll('#alcanceContainer .tag-edit-item')).map(item => {
+            const titulo = item.querySelector('.tag-titulo-alcance') ? item.querySelector('.tag-titulo-alcance').value.trim() : '';
+            const descripcion = item.querySelector('.tag-descripcion').value;
+            if (descripcion || titulo) {
+                const result = { descripcion };
+                if (titulo) result.titulo = titulo;
+                return result;
+            }
+            return null;
+        }).filter(item => item !== null);
+        
+        // Obtener imagen de sección Alcance
+        const alcanceImagen = document.getElementById('alcanceSectionImageData') ? document.getElementById('alcanceSectionImageData').value : '';
+        
+        // Obtener tags de ventajas
+        const ventajasItems = Array.from(document.querySelectorAll('#ventajasContainer .tag-edit-item')).map(item => {
+            const titulo = item.querySelector('.tag-titulo').value;
+            const descripcion = item.querySelector('.tag-descripcion').value;
+            if (titulo || descripcion) {
+                return { titulo, descripcion };
+            }
+            return null;
+        }).filter(item => item !== null);
+        
+        const data = {
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            section: document.getElementById('section').value,
+            type: document.getElementById('type').value,
+            icon: document.getElementById('icon').value,
+            pdf_url: document.getElementById('pdf_url').value,
+            alcance: alcanceItems,
+            alcance_imagen: alcanceImagen,
+            ventajas_esperadas: ventajasItems,
+            partes_interesadas: partesInteresadas
+        };
+        
+        try {
+            let response;
+            if (id) {
+                response = await fetch('/api/funcionalidades/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } else {
+                response = await fetch('/api/funcionalidades', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Funcionalidad guardada correctamente');
+                window.location.href = '/abm';
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al guardar la funcionalidad');
+        }
+    }
+
+    function agregarTagAlcance() {
+        const container = document.getElementById('alcanceContainer');
+        const index = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'tag-edit-item';
+        div.style.cssText = 'margin-bottom: 12px; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--hover-bg);';
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 500; font-size: 13px;">Tag ${index + 1}</span>
+                <button type="button" onclick="eliminarTagAlcance(this)" style="background: #d93025; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Eliminar</button>
+            </div>
+            <input type="text" class="tag-titulo-alcance" placeholder="Título (opcional)" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;">
+            <textarea class="tag-descripcion" placeholder="Descripción" rows="2" lang="es" spellcheck="true" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;"></textarea>
+        `;
+        container.appendChild(div);
+    }
+
+    function eliminarTagAlcance(btn) {
+        btn.closest('.tag-edit-item').remove();
+    }
+
+    function agregarTagVentajas() {
+        const container = document.getElementById('ventajasContainer');
+        const index = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'tag-edit-item';
+        div.style.cssText = 'margin-bottom: 12px; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--hover-bg);';
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 500; font-size: 13px;">Tag ${index + 1}</span>
+                <button type="button" onclick="eliminarTagVentajas(this)" style="background: #d93025; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Eliminar</button>
+            </div>
+            <input type="text" class="tag-titulo" placeholder="Título" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px; font-size: 14px;">
+            <textarea class="tag-descripcion" placeholder="Descripción" rows="2" lang="es" spellcheck="true" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; font-family: 'Google Sans', 'Roboto', sans-serif;"></textarea>
+        `;
+        container.appendChild(div);
+    }
+
+    function eliminarTagVentajas(btn) {
+        btn.closest('.tag-edit-item').remove();
+    }
+    
+    function previewAlcanceImage(input, index) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewDiv = document.getElementById('alcancePreview' + index);
+                const hiddenInput = input.closest('.tag-edit-item').querySelector('.tag-imagen-data');
+                if (previewDiv && hiddenInput) {
+                    previewDiv.style.display = 'block';
+                    previewDiv.innerHTML = '<img src="' + e.target.result + '" style="max-width: 200px; max-height: 150px; border-radius: 4px; border: 1px solid var(--border-color);" /><button type="button" onclick="eliminarAlcanceImage(' + index + ')" style="margin-left: 8px; padding: 4px 8px; background: #d93025; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Eliminar imagen</button>';
+                    hiddenInput.value = e.target.result;
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    function eliminarAlcanceImage(index) {
+        const previewDiv = document.getElementById('alcancePreview' + index);
+        const hiddenInput = previewDiv ? previewDiv.closest('.tag-edit-item').querySelector('.tag-imagen-data') : null;
+        const fileInput = previewDiv ? previewDiv.closest('.tag-edit-item').querySelector('.tag-imagen-alcance') : null;
+        if (previewDiv) previewDiv.style.display = 'none';
+        if (previewDiv) previewDiv.innerHTML = '';
+        if (hiddenInput) hiddenInput.value = '';
+        if (fileInput) fileInput.value = '';
+    }
+    
+    function previewAlcanceSectionImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewDiv = document.getElementById('alcanceSectionImagePreview');
+                const previewImg = document.getElementById('alcanceSectionImagePreviewImg');
+                const hiddenInput = document.getElementById('alcanceSectionImageData');
+                if (previewDiv && previewImg && hiddenInput) {
+                    previewDiv.style.display = 'block';
+                    previewImg.src = e.target.result;
+                    hiddenInput.value = e.target.result;
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    function eliminarAlcanceSectionImage() {
+        const previewDiv = document.getElementById('alcanceSectionImagePreview');
+        const previewImg = document.getElementById('alcanceSectionImagePreviewImg');
+        const hiddenInput = document.getElementById('alcanceSectionImageData');
+        const fileInput = document.getElementById('alcanceSectionImage');
+        if (previewDiv) previewDiv.style.display = 'none';
+        if (previewImg) previewImg.src = '';
+        if (hiddenInput) hiddenInput.value = '';
+        if (fileInput) fileInput.value = '';
+    }
+    
+    // Implementar pegado sin formato en todos los textareas
+    document.addEventListener('DOMContentLoaded', function() {
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                // Reemplazar saltos de línea y espacios múltiples por espacios simples
+                const plainText = text.replace(/\r\n/g, ' ').replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const value = this.value;
+                this.value = value.substring(0, start) + plainText + value.substring(end);
+                this.selectionStart = this.selectionEnd = start + plainText.length;
+            });
+        });
+    });
+
+    async function eliminarFuncionalidad(id) {
+        if (!confirm('¿Estás seguro de eliminar esta funcionalidad?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/funcionalidades/' + id, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Funcionalidad eliminada correctamente');
+                window.location.href = '/abm';
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar la funcionalidad');
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2025 Newsletter Unitrade. Todos los derechos reservados.</p>
+        <p>
+            <a href="https://mercapsoftware.com/" target="_blank" rel="noopener noreferrer">Mercap Software</a>
+            <span style="margin: 0 8px;">|</span>
+            <a href="#" onclick="abrirAdmin(); return false;" style="color: var(--text-secondary); text-decoration: none; cursor: pointer;">admin</a>
+        </p>
+    </div>
+</footer>
+
+<!-- Modal de Admin -->
+<div id="adminModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="modal-close" onclick="cerrarAdmin()">&times;</span>
+        <h2 style="margin-bottom: 20px;">Acceso Admin</h2>
+        <form id="adminForm" onsubmit="verificarAdmin(event)">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500;">Contraseña</label>
+                <input type="password" id="adminPassword" required style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
+        </form>
+    </div>
+</div>
+

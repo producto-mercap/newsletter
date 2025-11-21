@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Newsletter Unitrade</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <%- include('../partials/header', { activeMenu: 'catalogo', adminSession: typeof adminSession !== 'undefined' ? adminSession : false }) %>
+    
+    <main class="main-content">
+        <div class="page-header-panel">
+            <div class="page-header">
+            <div class="page-header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color: #d97706;">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+                <div>
+                    <h1 class="page-title catalogo">catálogo de funcionalidades</h1>
+                    <p class="page-subtitle"> Funcionalidades productivas organizadas por categorías</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 40px;">
+            <div style="margin-bottom: 24px;">
+                <div class="search-container">
+                    <form class="uni-search-bar" onsubmit="buscarFuncionalidades(event)" style="position: relative;">
+                        <button class="uni-search-bar__icon uni-search-bar__cta uni-search-bar__cta--search uni-search-bar__keep" type="submit" title="Submit" aria-label="Execute search"></button>
+                        <input 
+                            placeholder="Buscar funcionalidades..." 
+                            class="uni-search-bar__input uni-search-bar__keep" 
+                            aria-label="Buscar funcionalidades" 
+                            id="uni-search-bar__input" 
+                            type="search"
+                            value="<%= typeof busqueda !== 'undefined' ? busqueda : '' %>"
+                        >
+                        <div id="searchSuggestions" class="google-search-suggestions"></div>
+                    </form>
+                </div>
+                <% if (typeof adminSession !== 'undefined' && adminSession) { %>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button onclick="window.location.href='/detalle/nueva'" class="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Nueva Funcionalidad
+                    </button>
+                </div>
+                <% } %>
+            </div>
+            <div class="content-area">
+                <% 
+                const secciones = ['Operatorias', 'Backoffice', 'Market Data', 'Valuacion y Contabilidad', 'Reportes/Interfaces'];
+                secciones.forEach(seccion => {
+                    const funcs = funcionalidades[seccion] || [];
+                    if (funcs.length > 0 || !seccionActiva) {
+                %>
+                <div class="section-group">
+                    <h2 class="section-title"><%= seccion %></h2>
+                    
+                    <div class="cards-view">
+                        <% funcs.forEach(func => { 
+                            const slug = func.slug || func.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+                        %>
+                        <div class="card" onclick="<% if (typeof adminSession === 'undefined' || !adminSession) { %>window.location.href='/detalle/<%= encodeURIComponent(slug) %>'<% } %>">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <% if (func.icon) { %>
+                                        <% if (func.icon.startsWith('data:image')) { %>
+                                        <img src="<%= func.icon %>" style="margin-right: 8px; width: 20px; height: 20px; vertical-align: middle; object-fit: contain;" alt="Icono">
+                                        <% } else if (func.icon.startsWith('material-icons:')) { %>
+                                        <% const materialIconName = func.icon.split(':')[1]; %>
+                                        <span class="material-icons" style="margin-right: 8px; font-size: 20px; vertical-align: middle;"><%= materialIconName %></span>
+                                        <% } else { %>
+                                        <i class="<%= func.icon %>" style="margin-right: 8px; font-size: 20px; vertical-align: middle;"></i>
+                                        <% } %>
+                                    <% } %>
+                                    <%= func.title %>
+                                </h3>
+                                <% if (typeof adminSession !== 'undefined' && adminSession) { %>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="event.stopPropagation(); window.location.href='/detalle/<%= encodeURIComponent(slug) %>?edit=true'" class="btn" style="padding: 4px 8px; font-size: 12px;" title="Editar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); eliminarFuncionalidad('<%= func.id %>')" class="btn" style="padding: 4px 8px; font-size: 12px; background: #d93025; color: white;" title="Eliminar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <% } %>
+                            </div>
+                            <p class="card-description"><%= func.description ? (func.description.length > 150 ? func.description.substring(0, 150) + '...' : func.description) : 'Sin descripción' %></p>
+                            <div class="card-meta">
+                                <span class="card-tag"><%= func.section %></span>
+                                <% 
+                                // Mostrar tags de ventajas esperadas (títulos)
+                                let ventajasTags = [];
+                                if (func.ventajas_esperadas) {
+                                    try {
+                                        if (typeof func.ventajas_esperadas === 'string') {
+                                            const parsed = JSON.parse(func.ventajas_esperadas || '[]');
+                                            ventajasTags = Array.isArray(parsed) ? parsed : [];
+                                        } else if (Array.isArray(func.ventajas_esperadas)) {
+                                            ventajasTags = func.ventajas_esperadas;
+                                        }
+                                    } catch (e) {
+                                        ventajasTags = [];
+                                    }
+                                }
+                                ventajasTags.forEach(tag => {
+                                    const titulo = tag && (tag.titulo || tag.title || '');
+                                    if (titulo) {
+                                %>
+                                <span class="card-tag ventajas-tag"><%= titulo %></span>
+                                <% 
+                                    }
+                                }); 
+                                %>
+                            </div>
+                            <div class="card-more-info">
+                                <span class="more-info-text">Más información</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+                <% 
+                    }
+                }); 
+                %>
+                
+                <% if (todasLasFuncionalidades.length === 0) { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-text">No hay funcionalidades</div>
+                    <div class="empty-state-subtext">Intenta ajustar tus filtros o crear una nueva funcionalidad</div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+    
+    <script src="/js/main.js"></script>
+    <script src="/js/search-suggestions.js"></script>
+    <script>
+    function buscarFuncionalidades(event) {
+        event.preventDefault();
+        const search = document.getElementById('uni-search-bar__input').value;
+        let url = '/catalogo';
+        if (search) url += '?search=' + encodeURIComponent(search);
+        window.location.href = url;
+    }
+
+    async function eliminarFuncionalidad(id) {
+        if (!confirm('¿Estás seguro de que deseas eliminar esta funcionalidad?')) {
+            return;
+        }
+        try {
+            const response = await fetch('/api/funcionalidades/' + id, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert('Funcionalidad eliminada correctamente');
+                window.location.reload();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar la funcionalidad');
+        }
+    }
+    </script>
+</body>
+</html>
