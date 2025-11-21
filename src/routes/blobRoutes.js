@@ -40,6 +40,18 @@ const upload = multer({
  */
 router.post('/api/upload-image', upload.single('image'), async (req, res) => {
     try {
+        // ⚠️ VERIFICACIÓN CRÍTICA: Si Blob está deshabilitado, NO ejecutar put() ni ninguna Advanced Operation
+        // Para deshabilitar Blob completamente, establece BLOB_DISABLED=true en las variables de entorno
+        // O simplemente elimina/comenta BLOB_READ_WRITE_TOKEN
+        if (process.env.BLOB_DISABLED === 'true' || !process.env.BLOB_READ_WRITE_TOKEN) {
+            console.log('[BLOB] ⚠️ Blob deshabilitado - NO se ejecutará put() ni ninguna Advanced Operation');
+            return res.status(503).json({
+                success: false,
+                error: 'El almacenamiento de imágenes está deshabilitado. Las Advanced Operations de Vercel Blob no se ejecutarán.',
+                blobDisabled: true
+            });
+        }
+
         console.log('[BLOB] ⚠️⚠️⚠️ INICIANDO UPLOAD - Esto ejecutará put() y contará como Advanced Operation');
         
         // ⚠️ LAZY LOADING: Importar @vercel/blob SOLO cuando realmente se necesita

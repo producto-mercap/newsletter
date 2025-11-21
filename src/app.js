@@ -33,10 +33,17 @@ app.use('/', require('./routes/suscripcionesRoutes'));
 
 // ⚠️ IMPORTANTE: blobRoutes solo se carga cuando se necesita, no hace nada al importarse
 // Las Advanced Operations solo se ejecutan cuando se llama explícitamente a /api/upload-image
+// Para deshabilitar completamente Blob y evitar Advanced Operations:
+// 1. Establece BLOB_DISABLED=true en las variables de entorno, O
+// 2. Elimina/comenta BLOB_READ_WRITE_TOKEN en las variables de entorno
 console.log('[APP] Cargando blobRoutes...');
-const blobRoutes = require('./routes/blobRoutes');
-console.log('[APP] blobRoutes cargado (sin ejecutar código de @vercel/blob)');
-app.use('/', blobRoutes);
+if (process.env.BLOB_DISABLED === 'true' || !process.env.BLOB_READ_WRITE_TOKEN) {
+    console.log('[APP] ⚠️ Blob deshabilitado - NO se cargarán rutas de Blob (evita Advanced Operations)');
+} else {
+    const blobRoutes = require('./routes/blobRoutes');
+    console.log('[APP] blobRoutes cargado (sin ejecutar código de @vercel/blob)');
+    app.use('/', blobRoutes);
+}
 
 // Ruta 404
 app.use((req, res) => {
