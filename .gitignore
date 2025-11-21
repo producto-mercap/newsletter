@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.local
+.env.*
 .vercel
 *.log
 .DS_Store
@@ -10,3 +11,11 @@ build/
 *.swp
 *.swo
 *~
+
+# Archivos de documentación que pueden contener credenciales
+CONFIGURACION_VERCEL_NEON.md
+CONFIGURACION_VERCEL_BLOB.md
+
+# Archivos temporales
+*.tmp
+*.temp

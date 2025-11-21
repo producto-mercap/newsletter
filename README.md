@@ -170,10 +170,12 @@ Si ya tienes un proyecto Newsletter en Vercel:
 
 ### URL de Conexión
 
-La URL de conexión proporcionada es:
+La URL de conexión debe obtenerse desde Neon Console:
 ```
-postgresql://neondb_owner:npg_IcZ3Mmd9VTuf@ep-odd-thunder-adg9pmsi-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+postgresql://usuario:password@host.neon.tech/database?sslmode=require
 ```
+
+**⚠️ IMPORTANTE**: Reemplazar `usuario`, `password`, `host` y `database` con tus credenciales reales de Neon.
 
 ### Verificar Tablas
 
@@ -195,8 +197,10 @@ WHERE table_schema = 'public';
 
 2. **Desde línea de comandos** (si tienes psql):
 ```bash
-psql "postgresql://neondb_owner:npg_IcZ3Mmd9VTuf@ep-odd-thunder-adg9pmsi-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" -f Database/01_create_tables.sql
+psql "postgresql://usuario:password@host.neon.tech/database?sslmode=require" -f Database/01_create_tables.sql
 ```
+
+**⚠️ IMPORTANTE**: Reemplazar con tu URL de conexión real de Neon.
 
 ## 📝 Rutas Principales
 
