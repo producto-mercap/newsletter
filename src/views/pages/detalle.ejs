@@ -341,6 +341,41 @@
                 <% } else { %>
                     <!-- MODO VISUALIZACIÓN (ONE-PAGE) -->
                     <div class="one-page-container">
+                        <!-- Breadcrumbs -->
+                        <nav class="breadcrumbs" aria-label="Breadcrumb">
+                            <ol class="breadcrumbs-list">
+                                <% 
+                                let sectionName = '';
+                                let sectionUrl = '';
+                                if (funcionalidad && funcionalidad.type) {
+                                    if (funcionalidad.type === 'catalogo') {
+                                        sectionName = funcionalidad.section || 'Catálogo';
+                                        sectionUrl = '/catalogo' + (funcionalidad.section ? '?section=' + encodeURIComponent(funcionalidad.section) : '');
+                                    } else if (funcionalidad.type === 'newsletter') {
+                                        sectionName = 'Newsletter';
+                                        sectionUrl = '/newsletter';
+                                    } else if (funcionalidad.type === 'proximamente') {
+                                        sectionName = 'Próximamente';
+                                        sectionUrl = '/proximamente';
+                                    }
+                                }
+                                %>
+                                <li class="breadcrumb-item">
+                                    <a href="<%= sectionUrl || '/newsletter' %>" class="breadcrumb__button">
+                                        <%= (sectionName || 'Newsletter').toUpperCase() %>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-separator" aria-hidden="true">
+                                    <span>></span>
+                                </li>
+                                <li class="breadcrumb-item breadcrumb-item-current" aria-current="page">
+                                    <a href="#" class="breadcrumb__button breadcrumb__button--current">
+                                        <%= (funcionalidad && funcionalidad.title ? funcionalidad.title : 'Funcionalidad').toUpperCase() %>
+                                    </a>
+                                </li>
+                            </ol>
+                        </nav>
+                        
                         <div class="one-page-header">
                             <div class="one-page-header-content">
                                 <% if (funcionalidad && funcionalidad.icon) { %>
@@ -389,7 +424,7 @@
                         <div class="one-page-content">
                             <% if (funcionalidad && funcionalidad.description) { %>
                                 <div class="one-page-section">
-                                    <h2 class="one-page-section-title">Descripción</h2>
+                                    <h2 class="one-page-section-title" style="display: none;">Descripción</h2>
                                     <div class="one-page-section-content">
                                         <p>
                                             <%= funcionalidad.description %>
